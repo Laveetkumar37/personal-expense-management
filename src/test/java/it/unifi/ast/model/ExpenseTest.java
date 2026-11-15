@@ -38,4 +38,12 @@ public class ExpenseTest {
             new Expense(BigDecimal.ZERO);
         });
     }
+    
+ // Test 4: Null amounts must be rejected
+    @Test
+    public void shouldRejectNullAmount() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Expense(null);
+        });
+    }
 }
