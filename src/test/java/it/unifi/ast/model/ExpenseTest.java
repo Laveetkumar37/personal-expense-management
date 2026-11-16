@@ -3,9 +3,8 @@ package it.unifi.ast.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-
 import java.math.BigDecimal;
-
+import java.time.LocalDate;
 import org.junit.Test;
 
 public class ExpenseTest {
@@ -77,6 +76,32 @@ public class ExpenseTest {
         );
 
         assertEquals("Groceries", expense.getDescription());
+    }
+    
+ // Test 9: Null expense dates must be rejected
+    @Test
+    public void shouldRejectNullDate() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Expense(
+                new BigDecimal("25.50"),
+                "Groceries",
+                null
+            );
+        });
+    }
+    
+ // Test 10: Valid expense dates must be stored correctly
+    @Test
+    public void shouldStoreDate() {
+        LocalDate date = LocalDate.of(2026, 11, 16);
+
+        Expense expense = new Expense(
+            new BigDecimal("25.50"),
+            "Groceries",
+            date
+        );
+
+        assertEquals(date, expense.getDate());
     }
 
 }
