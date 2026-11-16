@@ -1,13 +1,22 @@
+
 package it.unifi.ast.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class Expense {
 
     private final BigDecimal amount;
     private final String description;
+    private final LocalDate date;
 
+    // Existing constructor: uses today's date by default
     public Expense(BigDecimal amount, String description) {
+        this(amount, description, LocalDate.now());
+    }
+
+    // Constructor with an explicitly supplied date
+    public Expense(BigDecimal amount, String description, LocalDate date) {
 
         if (amount == null) {
             throw new IllegalArgumentException("Amount cannot be null");
@@ -25,8 +34,15 @@ public class Expense {
             );
         }
 
+        if (date == null) {
+            throw new IllegalArgumentException(
+                "Expense date cannot be null"
+            );
+        }
+
         this.amount = amount;
         this.description = description;
+        this.date = date;
     }
 
     public BigDecimal getAmount() {
@@ -35,5 +51,9 @@ public class Expense {
 
     public String getDescription() {
         return description;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 }
