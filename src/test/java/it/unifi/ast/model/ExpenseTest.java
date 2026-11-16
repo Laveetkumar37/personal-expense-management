@@ -103,5 +103,31 @@ public class ExpenseTest {
 
         assertEquals(date, expense.getDate());
     }
+    
+ // Test 11: Null expense categories must be rejected
+    @Test
+    public void shouldRejectNullCategory() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Expense(
+                new BigDecimal("25.50"),
+                "Groceries",
+                LocalDate.of(2026, 11, 16),
+                null
+            );
+        });
+    }
+    
+ // Test 12: Valid expense categories must be stored correctly
+    @Test
+    public void shouldStoreCategory() {
+        Expense expense = new Expense(
+            new BigDecimal("25.50"),
+            "Groceries",
+            LocalDate.of(2026, 11, 16),
+            "Food"
+        );
+
+        assertEquals("Food", expense.getCategory());
+    }
 
 }
