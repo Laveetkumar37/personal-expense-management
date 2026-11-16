@@ -9,14 +9,21 @@ public class Expense {
     private final BigDecimal amount;
     private final String description;
     private final LocalDate date;
+    private final String category;
 
-    // Existing constructor: uses today's date by default
+    // Existing constructor: uses today's date and default category
     public Expense(BigDecimal amount, String description) {
         this(amount, description, LocalDate.now());
     }
 
-    // Constructor with an explicitly supplied date
+    // Existing constructor: uses default category
     public Expense(BigDecimal amount, String description, LocalDate date) {
+        this(amount, description, date, "Uncategorized");
+    }
+
+    // Constructor with an explicitly supplied category
+    public Expense(BigDecimal amount, String description,
+                   LocalDate date, String category) {
 
         if (amount == null) {
             throw new IllegalArgumentException("Amount cannot be null");
@@ -40,9 +47,16 @@ public class Expense {
             );
         }
 
+        if (category == null) {
+            throw new IllegalArgumentException(
+                "Expense category cannot be null"
+            );
+        }
+
         this.amount = amount;
         this.description = description;
         this.date = date;
+        this.category = category;
     }
 
     public BigDecimal getAmount() {
@@ -55,5 +69,9 @@ public class Expense {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }
