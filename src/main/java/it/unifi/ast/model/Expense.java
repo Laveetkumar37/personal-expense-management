@@ -47,10 +47,11 @@ public class Expense {
             );
         }
 
-        if (category == null) {
+        if (category == null || category.isBlank()) {
             throw new IllegalArgumentException(
-                "Expense category cannot be null"
+                "Expense category cannot be empty"
             );
+   
         }
 
         this.amount = amount;

@@ -129,5 +129,18 @@ public class ExpenseTest {
 
         assertEquals("Food", expense.getCategory());
     }
+    
+ // Test 13: Empty expense categories must be rejected
+    @Test
+    public void shouldRejectEmptyCategory() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Expense(
+                new BigDecimal("25.50"),
+                "Groceries",
+                LocalDate.of(2026, 11, 16),
+                ""
+            );
+        });
+    }
 
 }
