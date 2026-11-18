@@ -1,6 +1,6 @@
 
 package it.unifi.ast.model;
-
+import java.util.List;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 
@@ -54,4 +54,35 @@ public class Budget {
     public YearMonth getMonth() {
         return month;
     }
+    
+
+
+public BigDecimal calculateSpent(List<Expense> expenses) {
+
+    if (expenses == null) {
+        throw new IllegalArgumentException(
+            "Expense list cannot be null"
+        );
+    }
+
+    BigDecimal total = BigDecimal.ZERO;
+
+    for (Expense expense : expenses) {
+
+        YearMonth expenseMonth = YearMonth.from(expense.getDate());
+
+        if (expense.getCategory().equals(category)
+                && expenseMonth.equals(month)) {
+
+            total = total.add(expense.getAmount());
+        }
+    }
+
+    return total;
+}
+
+
+public BigDecimal calculateRemaining(List<Expense> expenses) {
+    return amount.subtract(calculateSpent(expenses));
+}
 }
