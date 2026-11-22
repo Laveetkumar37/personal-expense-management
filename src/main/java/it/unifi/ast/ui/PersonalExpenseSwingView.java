@@ -15,7 +15,7 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.BorderLayout;
+import java.awt.CardLayout;
 
 public class PersonalExpenseSwingView extends JFrame {
 
@@ -69,16 +69,22 @@ public class PersonalExpenseSwingView extends JFrame {
 	    JButton budgetsButton = new JButton("Budgets");
 	    Navigation_panel.add(budgetsButton);
 	    
-	    JPanel Main_content_panel = new JPanel();
+	 // Main content panel with CardLayout
+	    CardLayout cardLayout = new CardLayout();
+
+	    JPanel Main_content_panel = new JPanel(cardLayout);
+
 	    getContentPane().add(Main_content_panel, BorderLayout.CENTER);
-	    Main_content_panel.setLayout(new BorderLayout(0, 0));
+
+	    // Dashboard screen
+	    JPanel dashboardPanel = new JPanel(new BorderLayout(0, 0));
 	    
 	    JLabel dashboardTitleLabel = new JLabel("Dashboard Overview");
 	    dashboardTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
-	    Main_content_panel.add(dashboardTitleLabel, BorderLayout.NORTH);
+	    dashboardPanel.add(dashboardTitleLabel, BorderLayout.NORTH);
 	    
 	    JPanel Summary_panel = new JPanel();
-	    Main_content_panel.add(Summary_panel, BorderLayout.CENTER);
+	    dashboardPanel.add(Summary_panel, BorderLayout.CENTER);
 	    Summary_panel.setLayout(new GridLayout(1, 3, 10, 10));
 	    
 	    JPanel totalExpensesPanel = new JPanel();
@@ -127,7 +133,7 @@ public class PersonalExpenseSwingView extends JFrame {
 	    remainingBalancePanel.add(remainingBalanceAmountLabel);
 	    
 	    JPanel recentExpensesPanel = new JPanel();
-	    Main_content_panel.add(recentExpensesPanel, BorderLayout.SOUTH);
+	    dashboardPanel.add(recentExpensesPanel, BorderLayout.SOUTH);
 	    recentExpensesPanel.setLayout(new BorderLayout(0, 0));
 	    
 	    JLabel recentExpensesTitleLabel = new JLabel("Recent Expenses");
@@ -147,6 +153,34 @@ public class PersonalExpenseSwingView extends JFrame {
 	    ));
 	    
 	    scrollPane.setViewportView(table);
+	 // Register screens in CardLayout
+	    Main_content_panel.add(dashboardPanel, "DASHBOARD");
+
+	    Main_content_panel.add(new ExpensesPanel(), "EXPENSES");
+
+	    // Budgets screen (temporary placeholder)
+	    JPanel budgetsPanel = new JPanel(new BorderLayout());
+
+	    JLabel budgetsTitleLabel = new JLabel("Manage Budgets");
+	    budgetsTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
+	    budgetsTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+	    budgetsPanel.add(budgetsTitleLabel, BorderLayout.NORTH);
+
+	    Main_content_panel.add(budgetsPanel, "BUDGETS");
+
+	    // Navigation button actions
+	    dashboardButton.addActionListener(e ->
+	        cardLayout.show(Main_content_panel, "DASHBOARD"));
+
+	    expensesButton.addActionListener(e ->
+	        cardLayout.show(Main_content_panel, "EXPENSES"));
+
+	    budgetsButton.addActionListener(e ->
+	        cardLayout.show(Main_content_panel, "BUDGETS"));
+
+	    // Display Dashboard initially
+	    cardLayout.show(Main_content_panel, "DASHBOARD");
 
 	}
 
