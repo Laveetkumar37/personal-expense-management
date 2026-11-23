@@ -2,7 +2,7 @@ package it.unifi.ast.ui;
 
 import java.awt.EventQueue;
 import javax.swing.JTable;
-
+import it.unifi.ast.ui.BudgetPanel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -16,6 +16,9 @@ import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.CardLayout;
+import java.util.ArrayList;
+import java.util.List;
+import it.unifi.ast.model.Expense;
 
 public class PersonalExpenseSwingView extends JFrame {
 
@@ -153,21 +156,18 @@ public class PersonalExpenseSwingView extends JFrame {
 	    ));
 	    
 	    scrollPane.setViewportView(table);
-	 // Register screens in CardLayout
+	 // Shared expense list for the application
+	    List<Expense> sharedExpenses = new ArrayList<>();
+
+	    // Register screens in CardLayout
 	    Main_content_panel.add(dashboardPanel, "DASHBOARD");
+	    Main_content_panel.add(
+	            new ExpensesPanel(sharedExpenses), "EXPENSES");
 
-	    Main_content_panel.add(new ExpensesPanel(), "EXPENSES");
+	 // Budget Management screen
+	    BudgetPanel budgetPanel = new BudgetPanel(sharedExpenses);
 
-	    // Budgets screen (temporary placeholder)
-	    JPanel budgetsPanel = new JPanel(new BorderLayout());
-
-	    JLabel budgetsTitleLabel = new JLabel("Manage Budgets");
-	    budgetsTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
-	    budgetsTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-	    budgetsPanel.add(budgetsTitleLabel, BorderLayout.NORTH);
-
-	    Main_content_panel.add(budgetsPanel, "BUDGETS");
+	    Main_content_panel.add(budgetPanel, "BUDGETS");
 
 	    // Navigation button actions
 	    dashboardButton.addActionListener(e ->
@@ -176,8 +176,10 @@ public class PersonalExpenseSwingView extends JFrame {
 	    expensesButton.addActionListener(e ->
 	        cardLayout.show(Main_content_panel, "EXPENSES"));
 
-	    budgetsButton.addActionListener(e ->
-	        cardLayout.show(Main_content_panel, "BUDGETS"));
+	    budgetsButton.addActionListener(e -> {
+	        budgetPanel.refreshBudgets();
+	        cardLayout.show(Main_content_panel, "BUDGETS");
+	    });
 
 	    // Display Dashboard initially
 	    cardLayout.show(Main_content_panel, "DASHBOARD");
