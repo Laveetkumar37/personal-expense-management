@@ -71,7 +71,7 @@ public BigDecimal calculateSpent(List<Expense> expenses) {
 
         YearMonth expenseMonth = YearMonth.from(expense.getDate());
 
-        if (expense.getCategory().equals(category)
+        if (expense != null && category.equals(expense.getCategory())
                 && expenseMonth.equals(month)) {
 
             total = total.add(expense.getAmount());

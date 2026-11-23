@@ -21,17 +21,24 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.FlowLayout;
 import it.unifi.ast.model.Expense;
-
+import java.util.ArrayList;
+import java.util.List;
 public class ExpensesPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-
+    private final List<Expense> expenses;
     private JTextField descriptionTextField;
     private JTextField amountTextField;
     private JTextField dateTextField;
     private JTable expensesTable;
 
     public ExpensesPanel() {
+        this(new ArrayList<>());
+    }
+
+    public ExpensesPanel(List<Expense> expenses) {
+
+        this.expenses = expenses;
 
         setLayout(new BorderLayout());
 
@@ -221,6 +228,9 @@ public class ExpensesPanel extends JPanel {
                 Expense expense = new Expense(
                         amount, description, date, category);
 
+             // Store expense in shared list
+                expenses.add(expense);
+                
                 // Add expense to table
                 DefaultTableModel model =
                         (DefaultTableModel) expensesTable.getModel();
