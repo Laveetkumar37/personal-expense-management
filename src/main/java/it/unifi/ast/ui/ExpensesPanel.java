@@ -23,6 +23,8 @@ import java.awt.FlowLayout;
 import it.unifi.ast.model.Expense;
 import java.util.ArrayList;
 import java.util.List;
+import it.unifi.ast.repository.ExpenseRepository;
+
 public class ExpensesPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +33,8 @@ public class ExpensesPanel extends JPanel {
     private JTextField amountTextField;
     private JTextField dateTextField;
     private JTable expensesTable;
-
+    private final ExpenseRepository expenseRepository =
+            new ExpenseRepository();
     public ExpensesPanel() {
         this(new ArrayList<>());
     }
@@ -228,9 +231,12 @@ public class ExpensesPanel extends JPanel {
                 Expense expense = new Expense(
                         amount, description, date, category);
 
-             // Store expense in shared list
+             // Save expense in MySQL
+                expenseRepository.save(expense);
+
+                // Update the shared expense list
                 expenses.add(expense);
-                
+
                 // Add expense to table
                 DefaultTableModel model =
                         (DefaultTableModel) expensesTable.getModel();
@@ -265,8 +271,14 @@ public class ExpensesPanel extends JPanel {
                 JOptionPane.showMessageDialog(
                         this,
                         ex.getMessage());
-            }
-        });
+            } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Could not save expense: " + ex.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }});
         JPanel formContainer = new JPanel(
                 new FlowLayout(FlowLayout.CENTER));
 
@@ -309,5 +321,39 @@ public class ExpensesPanel extends JPanel {
         expenseScrollPane.setViewportView(expensesTable);
 
         add(expenseTablePanel, BorderLayout.CENTER);
+        loadExpenses();
+    }
+
+    private void loadExpenses() {
+        try {
+            List<Expense> savedExpenses = expenseRepository.findAll();
+
+            // Update the shared expense list
+            expenses.clear();
+            expenses.addAll(savedExpenses);
+
+            // Update the table
+            DefaultTableModel model =
+                    (DefaultTableModel) expensesTable.getModel();
+
+            model.setRowCount(0);
+
+            for (Expense expense : savedExpenses) {
+                model.addRow(new Object[] {
+                        expense.getDate(),
+                        expense.getDescription(),
+                        expense.getCategory(),
+                        expense.getAmount()
+                });
+            }
+
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Could not load expenses: " + ex.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }
