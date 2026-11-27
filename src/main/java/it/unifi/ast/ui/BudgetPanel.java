@@ -8,7 +8,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,9 +18,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import java.util.List;
 import it.unifi.ast.model.Expense;
 import it.unifi.ast.model.Budget;
+import it.unifi.ast.repository.BudgetRepository;
 
 public class BudgetPanel extends JPanel {
 	private final List<Expense> expenses;
@@ -31,11 +30,9 @@ public class BudgetPanel extends JPanel {
     private JTable budgetsTable;
     private DefaultTableModel tableModel;
     private List<Budget> budgets = new ArrayList<>();
-
+    private final BudgetRepository budgetRepository = new BudgetRepository();
     public BudgetPanel(List<Expense> expenses) {
-
         this.expenses = expenses;
-
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -94,6 +91,7 @@ public class BudgetPanel extends JPanel {
 
         add(centerPanel, BorderLayout.CENTER);
 
+        loadBudgets();
         // Add budget action
         addBudgetButton.addActionListener(e -> {
 
@@ -114,7 +112,13 @@ public class BudgetPanel extends JPanel {
                     amount, category, month
                 );
 
+             // Save budget in MySQL
+                budgetRepository.save(budget);
+
+                // Update the local budget list only once
                 budgets.add(budget);
+
+                // Refresh the table
                 refreshBudgets();
 
                 amountField.setText("");
@@ -144,6 +148,15 @@ public class BudgetPanel extends JPanel {
                     this,
                     ex.getMessage()
                 );
+
+            } catch (RuntimeException ex) {
+
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Could not save budget: " + ex.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
             }
         });
     }
@@ -165,6 +178,24 @@ public class BudgetPanel extends JPanel {
                 spent,
                 remaining
             });
+        }
+    }
+    private void loadBudgets() {
+        try {
+            List<Budget> savedBudgets = budgetRepository.findAll();
+
+            budgets.clear();
+            budgets.addAll(savedBudgets);
+
+            refreshBudgets();
+
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Could not load budgets: " + ex.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 }
